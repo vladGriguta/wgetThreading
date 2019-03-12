@@ -27,17 +27,23 @@ def get_address_lists(n_lists,file='../download_url.txt'):
     return addresses, i
 
 def worker(address,nothing):
-    os.system("wget "+address)
+    os.system("wget -q "+address)
 
 def test_run(pool,addresses,not_successful):
     nothing=True
+    progress = 0
     for i in range(len(addresses)):
+        time1 = datetime.datetime.now()
         for j in range(len(addresses[i])):
             try:
                 pool.apply_async(worker, args=(addresses[i][j],nothing))
             except:
                 print("The address number "+str(j)+" from stack "+str(i)+"was not downloaded")
                 not_successful.extend((i,j))
+        duration = (datetime.datetime.now() - time1).total_seconds()
+        print("Total progress is p = "+str(progress)+" %.")
+        print("Current mean download speed is v = "+str(j/duration)+" files per second.")
+        progress += float(i)/len(addresses)
                 
         #pool.apply_async(worker, args=(add[0],nothing))
             
@@ -48,7 +54,7 @@ if __name__ == "__main__":
     
     initialTime = datetime.datetime.now()
     
-    addresses,n_addresses = get_address_lists(4)
+    addresses,n_addresses = get_address_lists(int(NUM_CPUS*5))
     not_successful = []
     test_run(pool,addresses,not_successful)
     pool.close()
