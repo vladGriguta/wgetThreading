@@ -40,11 +40,11 @@ def test_run(pool,addresses,not_successful):
             except:
                 print("The address number "+str(j)+" from stack "+str(i)+"was not downloaded")
                 not_successful.extend((i,j))
-        duration = (datetime.datetime.now() - time1).total_seconds()
+	progress += float(i)/len(addresses)        
+	duration = (datetime.datetime.now() - time1).total_seconds()
         print("Total progress is p = "+str(progress)+" %.")
         print("Current mean download speed is v = "+str(j/duration)+" files per second.")
-        progress += float(i)/len(addresses)
-                
+                        
         #pool.apply_async(worker, args=(add[0],nothing))
             
 if __name__ == "__main__":
